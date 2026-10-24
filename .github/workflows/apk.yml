@@ -36,6 +36,13 @@ jobs:
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle* || true
           sed -i '/<manifest/a\    <uses-permission android:name="android.permission.CAMERA"/>' android/app/src/main/AndroidManifest.xml
 
+      - name: Turn off R8 shrinking (ML Kit has missing-class warnings)
+        run: |
+          sed -i 's/signingConfig = signingConfigs.getByName("debug")/&\n            isMinifyEnabled = false\n            isShrinkResources = false/' android/app/build.gradle.kts || true
+          sed -i 's/signingConfig signingConfigs.debug/&\n            minifyEnabled false\n            shrinkResources false/' android/app/build.gradle || true
+          printf 'minifyEnabled=false\n' >> android/gradle.properties
+          grep -n -A6 "release {" android/app/build.gradle* || true
+
       - run: flutter pub get
 
       - name: Analyze (errors are shown as annotations)
@@ -46,7 +53,7 @@ jobs:
 
       - name: Build release APK
         run: |
-          flutter build apk --release --no-shrink > build.log 2>&1 && exit 0
+          flutter build apk --release > build.log 2>&1 && exit 0
           M=$(grep -v -E "^\[|Unzipping|Downloading|Installing" build.log | grep -A12 -E "went wrong|Error:|error:" | head -30 | cut -c1-250 | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "::error title=BUILD::$M"
           exit 1
