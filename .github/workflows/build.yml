@@ -21,14 +21,25 @@ jobs:
           channel: stable
 
       - name: Create the Android part of the project
-        run: flutter create . --platforms=android --project-name fairrx
+        run: |
+          cp pubspec.yaml /tmp/pubspec.yaml
+          flutter create . --platforms=android --project-name fairrx
+          cp /tmp/pubspec.yaml pubspec.yaml
+
+      - name: Put our files in the right folders
+        run: |
+          mkdir -p lib/screens assets
+          for f in *_screen.dart; do [ -f "$f" ] && mv -f "$f" lib/screens/ || true; done
+          for f in main.dart matcher.dart models.dart store.dart widgets.dart; do [ -f "$f" ] && mv -f "$f" lib/ || true; done
+          [ -f medicines.json ] && mv -f medicines.json assets/ || true
+          rm -rf test
+          ls -R lib assets
 
       - name: Set minSdk to 23 and add camera permission
         run: |
           sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' android/app/build.gradle* || true
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle* || true
           sed -i '/<manifest/a\    <uses-permission android:name="android.permission.CAMERA"/>' android/app/src/main/AndroidManifest.xml
-          grep -n "minSdk" android/app/build.gradle* || true
 
       - run: flutter pub get
 
