@@ -1,0 +1,44 @@
+name: Build FairRx APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Create the Android part of the project
+        run: flutter create . --platforms=android --project-name fairrx
+
+      - name: Set minSdk to 23 and add camera permission
+        run: |
+          sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 23/' android/app/build.gradle* || true
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle* || true
+          sed -i '/<manifest/a\    <uses-permission android:name="android.permission.CAMERA"/>' android/app/src/main/AndroidManifest.xml
+          grep -n "minSdk" android/app/build.gradle* || true
+
+      - run: flutter pub get
+
+      - name: Analyze (errors show here)
+        run: flutter analyze || true
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fairrx-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
