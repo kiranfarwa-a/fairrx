@@ -47,7 +47,7 @@ jobs:
       - name: Build release APK
         run: |
           flutter build apk --release > build.log 2>&1 && exit 0
-          M=$(grep -v -E "^\[|Unzipping|Downloading|Installing" build.log | grep -E "Error|error:|FAILURE|went wrong|^e: |Could not|requires|Exception|not found" | head -14 | cut -c1-230 | sed ':a;N;$!ba;s/\n/%0A/g')
+          M=$(grep -v -E "^\[|Unzipping|Downloading|Installing" build.log | grep -A12 -E "went wrong|Error:|error:" | head -30 | cut -c1-250 | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "::error title=BUILD::$M"
           exit 1
 
