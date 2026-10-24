@@ -23,7 +23,7 @@ class AboutScreen extends StatelessWidget {
             'FairRx helps you read a prescription, find the generic name of a '
             'medicine and compare prices of options with the same ingredient '
             'and strength.\n\n'
-            'Built with Flutter and Google ML Kit text recognition.\n\n'
+            'Built with Flutter and Google ML Kit text recognition.\n\n' +
             kDataSource;
     return Scaffold(
       appBar: AppBar(title: Text(showPrivacy ? 'Privacy policy' : 'About')),
