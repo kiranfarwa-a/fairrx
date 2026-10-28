@@ -3,6 +3,7 @@ import '../models.dart';
 import '../store.dart';
 import '../widgets.dart';
 import 'add_reminder_screen.dart';
+import 'compare_screen.dart';
 
 class DetailScreen extends StatelessWidget {
   final Medicine med;
@@ -12,7 +13,21 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final alts = store.matcher.alternatives(med);
     return Scaffold(
-      appBar: AppBar(title: Text(med.brand)),
+      appBar: AppBar(
+        title: Text(med.brand),
+        actions: [
+          ListenableBuilder(
+            listenable: store,
+            builder: (context, _) => IconButton(
+              tooltip: 'Save',
+              icon: Icon(store.isFav(med.id)
+                  ? Icons.favorite
+                  : Icons.favorite_border),
+              onPressed: () => store.toggleFav(med.id),
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -48,6 +63,15 @@ class DetailScreen extends StatelessWidget {
                     'we do not compare it.'),
           for (final a in alts) _AltTile(original: med, alt: a),
           const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => CompareScreen(first: med)),
+            ),
+            icon: const Icon(Icons.compare_arrows),
+            label: const Text('Compare with another medicine'),
+          ),
+          const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => Navigator.push(
               context,

@@ -3,6 +3,7 @@ import '../store.dart';
 import '../widgets.dart';
 import 'disclaimer_screen.dart';
 import 'home_screen.dart';
+import 'welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,9 +25,11 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => store.disclaimerAccepted
-            ? const HomeScreen()
-            : const DisclaimerScreen(),
+        builder: (_) => !store.tourSeen
+            ? const WelcomeScreen()
+            : (store.disclaimerAccepted
+                ? const HomeScreen()
+                : const DisclaimerScreen()),
       ),
     );
   }

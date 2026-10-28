@@ -12,6 +12,8 @@ class AppStore extends ChangeNotifier {
   List<HistoryItem> history = [];
   List<Reminder> reminders = [];
   bool disclaimerAccepted = false;
+  bool tourSeen = false;
+  Set<String> favorites = {};
   bool premium = false; // demo switch only - no real payment
   late MedicineMatcher matcher;
 
@@ -27,6 +29,8 @@ class AppStore extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
     disclaimerAccepted = _prefs!.getBool('accepted') ?? false;
     premium = _prefs!.getBool('premium') ?? false;
+    tourSeen = _prefs!.getBool('tour') ?? false;
+    favorites = (_prefs!.getStringList('favs') ?? <String>[]).toSet();
 
     final h = _prefs!.getString('history');
     if (h != null) {
@@ -53,6 +57,24 @@ class AppStore extends ChangeNotifier {
   Future<void> acceptDisclaimer() async {
     disclaimerAccepted = true;
     await _prefs?.setBool('accepted', true);
+    notifyListeners();
+  }
+
+  Future<void> finishTour() async {
+    tourSeen = true;
+    await _prefs?.setBool('tour', true);
+    notifyListeners();
+  }
+
+  bool isFav(String id) => favorites.contains(id);
+
+  Future<void> toggleFav(String id) async {
+    if (favorites.contains(id)) {
+      favorites.remove(id);
+    } else {
+      favorites.add(id);
+    }
+    await _prefs?.setStringList('favs', favorites.toList());
     notifyListeners();
   }
 

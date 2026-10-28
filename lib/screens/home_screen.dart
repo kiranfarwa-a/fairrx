@@ -4,6 +4,7 @@ import '../widgets.dart';
 import 'history_screen.dart';
 import 'premium_screen.dart';
 import 'reminders_screen.dart';
+import 'saved_screen.dart';
 import 'scan_screen.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final pages = [
       _HomeTab(onGoTo: (i) => setState(() => _tab = i)),
       const SearchScreen(),
+      const SavedScreen(),
       const HistoryScreen(),
       const RemindersScreen(),
     ];
@@ -56,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
+          NavigationDestination(icon: Icon(Icons.favorite), label: 'Saved'),
           NavigationDestination(icon: Icon(Icons.history), label: 'History'),
           NavigationDestination(icon: Icon(Icons.alarm), label: 'Reminders'),
         ],
@@ -109,7 +112,7 @@ class _HomeTab extends StatelessWidget {
                 child: _ActionCard(
                   icon: Icons.history,
                   label: 'My history (${store.history.length})',
-                  onTap: () => onGoTo(2),
+                  onTap: () => onGoTo(3),
                 ),
               ),
               const SizedBox(width: 12),
@@ -117,7 +120,7 @@ class _HomeTab extends StatelessWidget {
                 child: _ActionCard(
                   icon: Icons.alarm,
                   label: 'Reminders (${store.reminders.length})',
-                  onTap: () => onGoTo(3),
+                  onTap: () => onGoTo(4),
                 ),
               ),
             ],
