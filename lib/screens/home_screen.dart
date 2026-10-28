@@ -18,6 +18,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _tab = 0;
 
+  static const List<String> _titles = [
+    'FairRx',
+    'Search',
+    'Saved',
+    'History',
+    'Reminders',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final pages = [
@@ -28,8 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
       const RemindersScreen(),
     ];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('FairRx'),
+      appBar: gradAppBar(
+        title: Text(_titles[_tab],
+            style: const TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             icon: const Icon(Icons.workspace_premium),
@@ -76,59 +85,115 @@ class _HomeTab extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) => ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
         children: [
-          const Text('Compare medicine prices in seconds',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text(
-              'Scan a prescription or strip, or search by name. See the '
-              'generic name and cheaper options with the same ingredient.'),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.document_scanner,
-                  label: 'Scan prescription',
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 26),
+            decoration: const BoxDecoration(
+              gradient: kGradient,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Know the fair price',
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white)),
+                const SizedBox(height: 8),
+                const Text(
+                    'Scan a prescription or search a medicine. See the generic '
+                    'name and cheaper options with the same ingredient.',
+                    style: TextStyle(
+                        fontSize: 14.5, height: 1.4, color: Colors.white70)),
+                const SizedBox(height: 18),
+                GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const ScanScreen())),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Color(0x33000000),
+                            blurRadius: 14,
+                            offset: Offset(0, 6)),
+                      ],
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.document_scanner, color: kGradEnd),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text('Scan a prescription or strip',
+                              style: TextStyle(
+                                  fontSize: 15.5,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        Icon(Icons.arrow_forward_ios,
+                            size: 16, color: Colors.black38),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.search,
-                  label: 'Search medicine',
-                  onTap: () => onGoTo(1),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.history,
-                  label: 'My history (${store.history.length})',
-                  onTap: () => onGoTo(3),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionCard(
+                        icon: Icons.search,
+                        label: 'Search medicine',
+                        onTap: () => onGoTo(1),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _ActionCard(
+                        icon: Icons.favorite,
+                        label: 'Saved (${store.favorites.length})',
+                        onTap: () => onGoTo(2),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _ActionCard(
-                  icon: Icons.alarm,
-                  label: 'Reminders (${store.reminders.length})',
-                  onTap: () => onGoTo(4),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionCard(
+                        icon: Icons.history,
+                        label: 'History (${store.history.length})',
+                        onTap: () => onGoTo(3),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _ActionCard(
+                        icon: Icons.alarm,
+                        label: 'Reminders (${store.reminders.length})',
+                        onTap: () => onGoTo(4),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                const DisclaimerBanner(),
+                const SizedBox(height: 14),
+                if (!store.premium) const AdBanner(),
+                const SizedBox(height: 80),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          const DisclaimerBanner(),
-          const SizedBox(height: 16),
-          if (!store.premium) const AdBanner(),
         ],
       ),
     );
@@ -143,18 +208,29 @@ class _ActionCard extends StatelessWidget {
       {required this.icon, required this.label, required this.onTap});
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 8),
-          child: Column(
-            children: [
-              Icon(icon, size: 34, color: kBrand),
-              const SizedBox(height: 8),
-              Text(label, textAlign: TextAlign.center),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: kSoftShadow,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+            child: Column(
+              children: [
+                GradBadge(icon: icon, size: 52),
+                const SizedBox(height: 10),
+                Text(label,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 14)),
+              ],
+            ),
           ),
         ),
       ),

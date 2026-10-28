@@ -26,11 +26,14 @@ class AboutScreen extends StatelessWidget {
             'Built with Flutter and Google ML Kit text recognition.\n\n' +
             kDataSource;
     return Scaffold(
-      appBar: AppBar(title: Text(showPrivacy ? 'Privacy policy' : 'About')),
+      appBar: gradAppBar(title: Text(showPrivacy ? 'Privacy policy' : 'About')),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
-          child: Text(text, style: const TextStyle(fontSize: 16, height: 1.4)),
+          child: SoftCard(
+            padding: const EdgeInsets.all(20),
+            child: Text(text, style: const TextStyle(fontSize: 15.5, height: 1.45)),
+          ),
         ),
       ),
     );

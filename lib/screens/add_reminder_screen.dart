@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets.dart';
 import '../models.dart';
 import '../store.dart';
 
@@ -25,7 +26,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add reminder')),
+      appBar: gradAppBar(title: const Text('Add reminder')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

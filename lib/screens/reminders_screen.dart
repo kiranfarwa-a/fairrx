@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../store.dart';
+import '../widgets.dart';
 import 'add_reminder_screen.dart';
 
 class RemindersScreen extends StatelessWidget {
@@ -44,8 +45,9 @@ class RemindersScreen extends StatelessWidget {
           children: [
             addButton,
             for (final r in store.reminders)
-              Card(
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              SoftCard(
+                padding: EdgeInsets.zero,
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                 child: SwitchListTile(
                   title: Text('${r.medicineName} - ${_time(r.hour, r.minute)}'),
                   subtitle: Text(r.note.isEmpty ? 'Daily' : r.note),

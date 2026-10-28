@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets.dart';
 import '../models.dart';
 import '../store.dart';
 
@@ -16,7 +17,7 @@ class _PickMedicineScreenState extends State<PickMedicineScreen> {
   Widget build(BuildContext context) {
     final List<Medicine> results = store.matcher.search(_query);
     return Scaffold(
-      appBar: AppBar(title: const Text('Choose a medicine')),
+      appBar: gradAppBar(title: const Text('Choose a medicine')),
       body: Column(
         children: [
           Padding(

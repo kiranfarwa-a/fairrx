@@ -52,6 +52,12 @@ jobs:
 
       - run: flutter pub get
 
+      - name: App icon and app name
+        run: |
+          dart run flutter_launcher_icons || true
+          sed -i 's/android:label="[^"]*"/android:label="FairRx"/' android/app/src/main/AndroidManifest.xml
+          grep -n 'android:label' android/app/src/main/AndroidManifest.xml || true
+
       - name: Analyze (errors are shown as annotations)
         run: |
           flutter analyze > analyze.log 2>&1 || true

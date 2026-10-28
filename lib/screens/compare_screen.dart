@@ -62,12 +62,13 @@ class _CompareScreenState extends State<CompareScreen> {
     final a = widget.first;
     final b = _second;
     return Scaffold(
-      appBar: AppBar(title: const Text('Compare')),
+      appBar: gradAppBar(title: const Text('Compare')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           if (b == null) ...[
-            Card(
+            SoftCard(
+              padding: EdgeInsets.zero,
               child: ListTile(
                 title: Text(a.brand),
                 subtitle: Text(a.generic),
@@ -80,7 +81,7 @@ class _CompareScreenState extends State<CompareScreen> {
               label: const Text('Choose a second medicine'),
             ),
           ] else ...[
-            Card(
+            SoftCard(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
@@ -99,8 +100,7 @@ class _CompareScreenState extends State<CompareScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            Card(
-              color: const Color(0xFFE6F4F3),
+            SoftCard(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(_verdict(a, b)),

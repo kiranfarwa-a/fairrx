@@ -55,19 +55,33 @@ class _ScanScreenState extends State<ScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scan')),
+      appBar: gradAppBar(title: const Text('Scan')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Icon(Icons.document_scanner, size: 80, color: kBrand),
-            const SizedBox(height: 12),
-            const Text(
-              'Take a clear photo of the prescription or the medicine strip. '
-              'Keep the text flat, bright and in focus.',
-              textAlign: TextAlign.center,
+            const SizedBox(height: 10),
+            Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                gradient: kGradient,
+                borderRadius: BorderRadius.circular(42),
+                boxShadow: kSoftShadow,
+              ),
+              child: const Icon(Icons.document_scanner,
+                  size: 70, color: Colors.white),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
+            const Text('Scan a prescription or strip',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 8),
+            const Text(
+              'Take a clear photo. Keep the text flat, bright and in focus.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54, height: 1.4),
+            ),
+            const SizedBox(height: 26),
             if (_busy)
               const Column(children: [
                 CircularProgressIndicator(),
@@ -75,22 +89,16 @@ class _ScanScreenState extends State<ScanScreen> {
                 Text('Reading text on your phone...'),
               ])
             else ...[
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () => _scan(ImageSource.camera),
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('Use camera'),
-                ),
+              FilledButton.icon(
+                onPressed: () => _scan(ImageSource.camera),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text('Use camera'),
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () => _scan(ImageSource.gallery),
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('Choose from gallery'),
-                ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => _scan(ImageSource.gallery),
+                icon: const Icon(Icons.photo_library),
+                label: const Text('Choose from gallery'),
               ),
             ],
             if (_error != null) ...[
@@ -115,7 +123,7 @@ class ScanResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Scan result')),
+      appBar: gradAppBar(title: const Text('Scan result')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

@@ -31,8 +31,11 @@ class HistoryScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.black54)),
               ),
             for (final h in items)
-              Card(
+              SoftCard(
+                padding: EdgeInsets.zero,
                 child: ExpansionTile(
+                  shape: const Border(),
+                  collapsedShape: const Border(),
                   leading: Icon(h.source == 'scan'
                       ? Icons.document_scanner
                       : Icons.search),
