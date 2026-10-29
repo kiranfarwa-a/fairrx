@@ -59,7 +59,7 @@ jobs:
 
       - name: Build release APK
         run: |
-          flutter build apk --release --split-per-abi > build.log 2>&1 && exit 0
+          flutter build apk --release --target-platform android-arm64 > build.log 2>&1 && exit 0
           M=$(grep -v -E "^\[|Unzipping|Downloading|Installing" build.log | grep -A12 -E "went wrong|Error:|error:" | head -30 | cut -c1-250 | sed ':a;N;$!ba;s/\n/%0A/g')
           echo "::error title=BUILD::$M"
           exit 1
