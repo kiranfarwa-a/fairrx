@@ -45,7 +45,7 @@ class _ScanScreenState extends State<ScanScreen> {
     } catch (e) {
       setState(() {
         _busy = false;
-        _error = 'Could not read the image. Please try again.';
+        _error = 'Could not read the image. Details: $e';
       });
     } finally {
       await recognizer.close();
@@ -127,6 +127,9 @@ class ScanResultScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Text('Characters read from the photo: ${text.length}',
+              style: const TextStyle(fontSize: 12, color: Colors.black54)),
+          const SizedBox(height: 6),
           Text(
             matches.isEmpty
                 ? 'No medicine from our list was found.'
@@ -140,6 +143,7 @@ class ScanResultScreen extends StatelessWidget {
           for (final m in matches) MedicineTile(med: m),
           const SizedBox(height: 12),
           ExpansionTile(
+            initiallyExpanded: true,
             title: const Text('Text the phone read'),
             children: [
               Padding(

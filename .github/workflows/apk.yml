@@ -36,19 +36,12 @@ jobs:
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 23/' android/app/build.gradle* || true
           sed -i '/<manifest/a\    <uses-permission android:name="android.permission.CAMERA"/>' android/app/src/main/AndroidManifest.xml
 
-      - name: Turn on R8 shrinking with ML Kit rules (smaller APK)
+      - name: Turn OFF R8 shrinking (keeps ML Kit text reading safe)
         run: |
-          cat > android/app/proguard-rules.pro <<'RULES'
-          -dontwarn com.google.mlkit.vision.text.chinese.**
-          -dontwarn com.google.mlkit.vision.text.devanagari.**
-          -dontwarn com.google.mlkit.vision.text.japanese.**
-          -dontwarn com.google.mlkit.vision.text.korean.**
-          RULES
-          sed -i 's/^          //' android/app/proguard-rules.pro
-          sed -i 's/signingConfig = signingConfigs.getByName("debug")/&\n            isMinifyEnabled = true\n            isShrinkResources = true\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' android/app/build.gradle.kts || true
-          sed -i 's/signingConfig signingConfigs.debug/&\n            minifyEnabled true\n            shrinkResources true\n            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"/' android/app/build.gradle || true
-          cat android/app/proguard-rules.pro
-          grep -n -A8 "release {" android/app/build.gradle* || true
+          sed -i 's/signingConfig = signingConfigs.getByName("debug")/&\n            isMinifyEnabled = false\n            isShrinkResources = false/' android/app/build.gradle.kts || true
+          sed -i 's/signingConfig signingConfigs.debug/&\n            minifyEnabled false\n            shrinkResources false/' android/app/build.gradle || true
+          printf 'minifyEnabled=false\n' >> android/gradle.properties
+          grep -n -A6 "release {" android/app/build.gradle* || true
 
       - run: flutter pub get
 
