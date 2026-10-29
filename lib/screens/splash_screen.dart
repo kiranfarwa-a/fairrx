@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../notifications.dart';
 import '../store.dart';
 import '../widgets.dart';
 import 'disclaimer_screen.dart';
@@ -20,6 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _start() async {
     await store.load();
+    try {
+      await Notifier.init();
+    } catch (_) {}
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
     Navigator.pushReplacement(

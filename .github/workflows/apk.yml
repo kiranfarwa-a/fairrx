@@ -43,6 +43,15 @@ jobs:
           printf 'minifyEnabled=false\n' >> android/gradle.properties
           grep -n -A6 "release {" android/app/build.gradle* || true
 
+      - name: Notification setup (desugaring, permissions, receivers)
+        run: |
+          sed -i 's/compileOptions {/compileOptions {\n        isCoreLibraryDesugaringEnabled = true/' android/app/build.gradle.kts || true
+          printf '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")\n}\n' >> android/app/build.gradle.kts
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>' $M
+          sed -i 's#</application>#    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />\n        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">\n            <intent-filter>\n                <action android:name="android.intent.action.BOOT_COMPLETED"/>\n                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>\n            </intent-filter>\n        </receiver>\n    </application>#' $M
+          cat $M | head -30
+
       - run: flutter pub get
 
       - name: App icon and app name

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../store.dart';
+import '../notifications.dart';
 import '../widgets.dart';
 import 'add_reminder_screen.dart';
 
@@ -30,10 +31,19 @@ class RemindersScreen extends StatelessWidget {
             ),
           ),
         );
+        final testButton = Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+          child: TextButton.icon(
+            onPressed: () => Notifier.showTest(),
+            icon: const Icon(Icons.notifications_active),
+            label: const Text('Send a test alert now'),
+          ),
+        );
         if (store.reminders.isEmpty) {
           return Column(
             children: [
               addButton,
+              testButton,
               const Expanded(
                 child: Center(child: Text('No reminders yet.')),
               ),
@@ -44,6 +54,7 @@ class RemindersScreen extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 90),
           children: [
             addButton,
+            testButton,
             for (final r in store.reminders)
               SoftCard(
                 padding: EdgeInsets.zero,

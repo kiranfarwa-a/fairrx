@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'matcher.dart';
 import 'models.dart';
+import 'notifications.dart';
 
 /// One place that holds the app data and saves it on the phone.
 class AppStore extends ChangeNotifier {
@@ -111,6 +112,9 @@ class AppStore extends ChangeNotifier {
   Future<void> addReminder(Reminder r) async {
     reminders.add(r);
     await _saveReminders();
+    try {
+      if (r.enabled) await Notifier.schedule(r);
+    } catch (_) {}
     notifyListeners();
   }
 
@@ -119,12 +123,29 @@ class AppStore extends ChangeNotifier {
         .map((r) => r.id == id ? r.copyWith(enabled: enabled) : r)
         .toList();
     await _saveReminders();
+    try {
+      for (final r in reminders) {
+        if (r.id == id) {
+          if (enabled) {
+            await Notifier.schedule(r);
+          } else {
+            await Notifier.cancel(r);
+          }
+        }
+      }
+    } catch (_) {}
     notifyListeners();
   }
 
   Future<void> deleteReminder(String id) async {
+    final gone = reminders.where((r) => r.id == id).toList();
     reminders.removeWhere((r) => r.id == id);
     await _saveReminders();
+    try {
+      for (final r in gone) {
+        await Notifier.cancel(r);
+      }
+    } catch (_) {}
     notifyListeners();
   }
 
